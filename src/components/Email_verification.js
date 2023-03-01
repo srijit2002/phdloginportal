@@ -36,6 +36,7 @@ const Email_verification = (props) => {
     // const random = (Math.floor(Math.random() * 9000 + 1000));
     // setOTPGenerated(random);
     // event.preventDefault();
+    console.log("sendOTP called");
     changeOtpSent();
     const res = await fetch("http://localhost:5000/api/auth/register", {
       method: "POST",

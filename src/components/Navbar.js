@@ -1,11 +1,13 @@
 import React, { useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import adminContext from "../context/Admins/adminContext";
 import userContext from "../context/Users/userContext";
 
 const Navbar = () => {
   let Navigate = useNavigate();
 
   const userDetails = useContext(userContext);
+  const adminDetails = useContext(adminContext);
   const handleProfile = () => {};
   const handleLogout = (event) => {
     event.preventDefault();
@@ -72,7 +74,10 @@ const Navbar = () => {
                   className="mx-2"
                   style={{ color: "white", fontSize: "20px" }}
                 >
-                  Hello, {userDetails.state2.full_name}!
+                  Hello,{" "}
+                  {userDetails.state2.full_name ||
+                    adminDetails.state2.full_name}
+                  !
                 </b>
                 <button className="btn btn-primary mx-2" onClick={handleLogout}>
                   Logout

@@ -5,11 +5,20 @@ const { body, validationResult } = require("express-validator");
 var fetchuser = require("../middleware/fetchuser");
 const bcrypt = require("bcryptjs");
 var jwt = require("jsonwebtoken");
+const multer = require("multer");
+
+const cloudinary = require("cloudinary").v2;
+
 // const sendEmail = require("../helpers/email");
 // const dotenv = require("dotenv").config();
 const nodemailer = require("nodemailer");
 
 const JWT_SECRET = "Login Portal";
+
+const storage = multer.diskStorage({});
+let upload = multer({
+  storage,
+});
 
 // Route 1: Create User
 router.post(
@@ -23,6 +32,7 @@ router.post(
     body("alt_mail", "Enter a valid alternate email").isEmail(),
     body("Guide").default(""),
     body("CoGuide").default(""),
+    body("PDF_DownloadLink").default(""),
   ],
   async (req, res) => {
     const errors = validationResult(req);
@@ -126,8 +136,9 @@ router.post("/getuser", fetchuser, async (req, res) => {
   }
 });
 
+// Route 4: Edit user details
 router.put("/edituserName/:id", fetchuser, async (req, res) => {
-  const { Guide, Co_Guide, Commencement_Date } = req.body;
+  const { Guide, Co_Guide, Commencement_Date, PDFLink } = req.body;
   // const salt = await bcrypt.genSalt(10);
   // const secPass = await bcrypt.hash(password, salt);
   try {
@@ -140,6 +151,9 @@ router.put("/edituserName/:id", fetchuser, async (req, res) => {
     }
     if (Commencement_Date) {
       newUser.Commencement_Date = Commencement_Date;
+    }
+    if (PDFLink) {
+      newUser.PDF_DownloadLink = PDFLink;
     }
     // if (password) {
     //   newUser.password = secPass;
@@ -162,6 +176,37 @@ router.put("/edituserName/:id", fetchuser, async (req, res) => {
   }
 });
 
+router.put("/editPDFlink/:id", fetchuser, async (req, res) => {
+  const { PDF_DownloadLink } = req.body;
+  // const salt = await bcrypt.genSalt(10);
+  // const secPass = await bcrypt.hash(password, salt);
+  try {
+    const newUser = {};
+    if (PDF_DownloadLink) {
+      newUser.PDF_DownloadLink = PDF_DownloadLink;
+    }
+    // if (password) {
+    //   newUser.password = secPass;
+    // }
+    let tempuser = await User.findById(req.params.id);
+    if (!tempuser) {
+      res.status(404).send("Not Found");
+    }
+
+    tempuser = await User.findByIdAndUpdate(
+      req.params.id,
+      { $set: newUser },
+      { new: true }
+    );
+
+    res.json({ tempuser });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+// Route 5: Email veification
 router.post("/register", async (req, res) => {
   const { email, otp } = req.body;
   try {
@@ -172,7 +217,7 @@ router.post("/register", async (req, res) => {
       service: "gmail",
       auth: {
         user: "yash222143@gmail.com",
-        pass: "jiadnffwdaknvlne",
+        pass: "lkirckwfvkwlczwe",
       },
     });
 
@@ -194,6 +239,30 @@ router.post("/register", async (req, res) => {
   } catch (error) {
     console.log("Error" + error);
     res.status(401).json({ status: 401, error });
+  }
+});
+
+//Route 6: Upload Files in Cloudinary
+router.post("/uploadFile", upload.single("myFile"), async (req, res) => {
+  try {
+    // check if file is present in request body
+    if (!req.files || Object.keys(req.files).length === 0) {
+      return res.status(400).json({ msg: "No file uploaded" });
+    }
+
+    const { myFile } = req.files;
+
+    // upload PDF file to Cloudinary
+    const result = await cloudinary.uploader.upload(myFile.tempFilePath, {
+      resource_type: "auto",
+      folder: "PDF_files",
+      allowed_formats: ["pdf"],
+    });
+
+    res.json({ url: result.secure_url });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Server error");
   }
 });
 

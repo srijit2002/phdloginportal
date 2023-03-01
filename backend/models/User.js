@@ -42,7 +42,11 @@ const UserSchema = new Schema({
   },
   Commencement_Date: {
     type: Date,
-    default: "08/06/2008"
+    default: "08/06/2008",
+  },
+  PDF_DownloadLink: {
+    type: String,
+    default: "Not Set",
   },
 });
 // mongoose.model = {};

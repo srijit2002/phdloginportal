@@ -14,6 +14,7 @@ const UserState = (props) => {
     Guide: localStorage.getItem("Guide"),
     Co_Guide: localStorage.getItem("Co_Guide"),
     Commencement_Date: localStorage.getItem("Commencement_Date"),
+    PDF_DownloadLink: localStorage.getItem("PDF_DownloadLink"),
   };
   const [state2, setState2] = useState(state);
 
@@ -26,7 +27,8 @@ const UserState = (props) => {
     password,
     Guide,
     Co_Guide,
-    Commencement_Date
+    Commencement_Date,
+    PDF_DownloadLink
   ) => {
     setState2({
       full_name: full_name,
@@ -38,6 +40,7 @@ const UserState = (props) => {
       Guide: Guide,
       Co_Guide: Co_Guide,
       Commencement_Date: Commencement_Date,
+      PDF_DownloadLink: PDF_DownloadLink,
     });
   };
 
@@ -60,27 +63,74 @@ const UserState = (props) => {
       json.password,
       json.Guide,
       json.Co_Guide,
-      json.Commencement_Date
+      json.Commencement_Date,
+      json.PDF_DownloadLink
     );
     localStorage.setItem("userid", json._id);
   };
 
-  const editUserDetails = async (id, Guide, Co_Guide, Commencement_Date) => {
-    const res = fetch(`${host}/api/auth/editusername/${id}`, {
+  const editUserDetails = async (
+    id,
+    Guide,
+    Co_Guide,
+    Commencement_Date,
+    // PDF_DownloadLink
+  ) => {
+    const res = await fetch(`${host}/api/auth/editusername/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
         "auth-token": localStorage.getItem("token"),
       },
-      body: JSON.stringify({ Guide, Co_Guide, Commencement_Date }),
+      body: JSON.stringify({
+        Guide,
+        Co_Guide,
+        Commencement_Date,
+        // PDF_DownloadLink,
+      }),
     });
     console.log(res);
     getUserDetails();
   };
 
+  const editPDFLink = async (id, PDF_DownloadLink) => {
+    const res = await fetch(`${host}/api/auth/editPDFlink/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "auth-token": localStorage.getItem("token"),
+      },
+      body: JSON.stringify({
+        PDF_DownloadLink,
+      }),
+    });
+    console.log(res);
+    getUserDetails();
+  };
+
+  // const postPDFfile = async (filedata) => {
+  //   // console.log("Filedata",filedata);
+  //   const formData = new FormData();
+  //   formData.append("myFile", filedata);
+  //   // for (const key of formData.keys()) {
+  //   //   console.log(key, formData.get(key));
+  //   // }
+  //   const res = await fetch(`${host}/api/auth/uploadFile`, {
+  //     method: "POST",
+  //     body: formData,
+  //   });
+  //   if (res.status === 200) {
+  //     const responseJson = await res.json();
+  //     const downloadLink = responseJson.secure_url;
+  //     update({ ...state2, PDF_DownloadLink: downloadLink });
+  //   } else {
+  //     console.log("File upload failed.");
+  //   }
+  // };
+
   return (
     <UserContext.Provider
-      value={{ state2, update, getUserDetails, editUserDetails }}
+      value={{ state2, update, getUserDetails, editUserDetails, editPDFLink }}
     >
       {props.children}
     </UserContext.Provider>

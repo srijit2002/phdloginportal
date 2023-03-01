@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import userContext from "../context/Users/userContext";
-
+import { Link } from "react-router-dom";
 const Home = (props) => {
   let [authMode, setAuthMode] = useState("signin");
 
@@ -83,6 +83,28 @@ const Home = (props) => {
     Navigate("/verifyemail");
   };
 
+  const [isValid, setIsValid] = useState(true);
+
+  const [isStrongPass, setIsStrongPass] = useState(true);
+
+  function checkValidWebMail(e) {
+    const { value } = e.target;
+    // setEmail(value);
+    setIsValid(value.endsWith("@iitp.ac.in"));
+  }
+
+  function isPasswordStrong(password) {
+    const passwordRegex =
+      /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]).{8,}$/;
+    return passwordRegex.test(password);
+  }
+
+  function checkStrongPass(e) {
+    const { value } = e.target;
+    // setPassword(value);
+    setIsStrongPass(isPasswordStrong(value));
+  }
+
   const changeAuthMode = () => {
     setAuthMode(authMode === "signin" ? "signup" : "signin");
   };
@@ -99,18 +121,29 @@ const Home = (props) => {
                 className="link-primary change2pointer"
                 onClick={changeAuthMode}
               >
-                Sign Up
+                <u>Sign Up</u>
               </span>
+              <p className="text-center mt-2">
+                <Link to="/admin">Admin!</Link>
+              </p>
             </div>
             <div className="form-group mt-3">
               <label>Institute Web Mail</label>
               <input
                 type="email"
-                className="form-control mt-1"
+                className={`form-control mt-1 ${isValid ? "" : "is-invalid"}`}
                 placeholder="Enter email"
                 name="web_mail"
-                onChange={onChangeSignin}
+                onChange={(e) => {
+                  checkValidWebMail(e);
+                  onChangeSignin(e);
+                }}
               />
+              {!isValid && (
+                <div className="invalid-feedback">
+                  Please enter a valid institute web mail.
+                </div>
+              )}
             </div>
             <div className="form-group mt-3">
               <label>Password</label>
@@ -128,7 +161,7 @@ const Home = (props) => {
               </button>
             </div>
             <p className="text-center mt-2">
-              <a href="/">Forgot password?</a>
+              <Link to="/">Forgot password?</Link>
             </p>
           </div>
         </form>
@@ -176,12 +209,20 @@ const Home = (props) => {
             <label>Institute Webmail</label>
             <input
               type="email"
-              className="form-control mt-1"
+              className={`form-control mt-1 ${isValid ? "" : "is-invalid"}`}
               placeholder="e.g yash_2001ee83@iitp.ac.in"
               name="web_mail"
-              onChange={onChangeSignup}
+              onChange={(e) => {
+                checkValidWebMail(e);
+                onChangeSignup(e);
+              }}
               required
             />
+            {!isValid && (
+              <div className="invalid-feedback">
+                Please enter a valid institute web mail.
+              </div>
+            )}
           </div>
           <div className="mb-3">
             <label htmlFor="tag" className="form-label">
@@ -198,8 +239,8 @@ const Home = (props) => {
                 selected
                 disabled
                 placeholder="Department"
-                style={{color:"#697078"}}
-                value="Department"
+                style={{ color: "#697078" }}
+                value=""
               >
                 Department
               </option>
@@ -220,12 +261,26 @@ const Home = (props) => {
             <label>Password</label>
             <input
               type="password"
-              className="form-control mt-1"
+              className={`form-control mt-1 ${
+                isStrongPass ? "" : "is-invalid"
+              }`}
+              onChange={(e) => {
+                checkStrongPass(e);
+                onChangeSignup(e);
+              }}
               placeholder="Password"
               name="password"
-              onChange={onChangeSignup}
+              // minLength={8}
               required
             />
+            {!isStrongPass && (
+              <div className="invalid-feedback">
+                Please enter a strong password.
+                <br />A strong password must contain at least one digit, one
+                uppercase letter, one lowercase letter, one symbol and at least
+                8 characters long.
+              </div>
+            )}
           </div>
           <div className="mb-3">
             <label htmlFor="confirmpassword" className="form-label">
