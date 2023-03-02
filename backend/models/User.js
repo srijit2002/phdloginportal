@@ -12,12 +12,12 @@ const UserSchema = new Schema({
   web_mail: {
     type: String,
     required: true,
-    unique: true,
+    // unique: true,
   },
   rollno: {
     type: String,
     required: true,
-    // unique: true,
+    unique: true,
   },
   password: {
     type: String,

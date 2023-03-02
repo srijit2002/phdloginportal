@@ -41,12 +41,40 @@ const Record = (props) => {
     /* generate XLSX file and download */
     XLSX.writeFile(wb, "my-table.xlsx");
   };
+  useEffect(() => {
+    const searchInput = document.getElementById("search-input");
+    const table = document.getElementById("my-table");
+    const tableRows = table && table.getElementsByTagName("tr");
+
+    searchInput.addEventListener("input", function () {
+      const searchTerm = searchInput.value.toLowerCase();
+
+      for (let i = 0; i < tableRows.length; i++) {
+        const row = tableRows[i];
+        const rowData = row.textContent.toLowerCase();
+
+        if (i === 0) {
+          row.style.display = "";
+        } else if (rowData.includes(searchTerm)) {
+          row.style.display = "";
+        } else {
+          row.style.display = "none";
+        }
+      }
+    });
+  }, []);
   return (
     <>
       <div className="container" style={{ textAlign: "center" }}>
         <u>
           <h1>{adminDetails.state2.department} Student Record</h1>
         </u>
+        <input
+          className="mb-3"
+          type="text"
+          id="search-input"
+          placeholder="Search..."
+        ></input>
       </div>
       <div className="container" style={{ textAlign: "center" }}>
         <Table
@@ -78,9 +106,7 @@ const Record = (props) => {
             record.map((stud, index) => {
               return (
                 <tr>
-                  <th style={{ border: "1.5px solid #000000" }}>
-                    {index + 1}
-                  </th>
+                  <th style={{ border: "1.5px solid #000000" }}>{index + 1}</th>
                   <th style={{ border: "1.5px solid #000000" }}>
                     {stud.full_name}
                   </th>
@@ -137,11 +163,13 @@ const Record = (props) => {
             })}
         </Table>
       </div>
-      {record.length>0 && (<div className="container" style={{ textAlign: "center" }}>
-        <button className="btn btn-primary" onClick={exportTable}>
-          Download Record as PDF
-        </button>
-      </div>)}
+      {record.length > 0 && (
+        <div className="container" style={{ textAlign: "center" }}>
+          <button className="btn btn-primary" onClick={exportTable}>
+            Download Record as PDF
+          </button>
+        </div>
+      )}
     </>
   );
 };
