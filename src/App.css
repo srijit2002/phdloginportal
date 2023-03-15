@@ -75,3 +75,17 @@ label {
   cursor: pointer;
 }
 
+.search-input {
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  padding: 8px;
+  font-size: 16px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: border-color 0.2s ease-in-out;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #0066cc;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}

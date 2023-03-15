@@ -44,6 +44,7 @@ const Profile = (props) => {
         "https://api.cloudinary.com/v1_1/drxdqo1xr/upload",
         formData
       );
+      // response.public_id for deleting or editing the file
 
       const uploadedFile = response.data.secure_url;
       setUploadedFile(uploadedFile);

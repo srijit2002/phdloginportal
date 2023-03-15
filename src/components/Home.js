@@ -3,6 +3,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import userContext from "../context/Users/userContext";
 import { Link } from "react-router-dom";
+import { useEffect } from "react";
+
 const Home = (props) => {
   let [authMode, setAuthMode] = useState("signin");
 
@@ -17,6 +19,22 @@ const Home = (props) => {
     confirmpassword: "",
     alt_mail: "",
   });
+  const [departments, setDepartments] = useState([]);
+  const host = "http://localhost:5000";
+
+  useEffect(() => {
+    async function fetchDept() {
+      const response = await fetch(`${host}/departments`, {
+        method: "GET",
+      });
+      const json = await response.json();
+      json.sort((a, b) => a.department.localeCompare(b.department));
+      const departmentNames = json.map((department) => department.department);
+      setDepartments(departmentNames);
+      console.log(departmentNames);
+    }
+    fetchDept();
+  }, []);
 
   const onChangeSignup = (event) => {
     setSignUpCredentials({
@@ -244,7 +262,7 @@ const Home = (props) => {
               >
                 Department
               </option>
-              <option value="Computer Sciecnce and Engineering">
+              {/* <option value="Computer Sciecnce and Engineering">
                 Computer Sciecnce and Engineering
               </option>
               <option value="Electrical and Electronics Engineering">
@@ -254,7 +272,12 @@ const Home = (props) => {
                 Mechanical Engineering
               </option>
               <option value="Chemical Engineering">Chemical Engineering</option>
-              <option value="Civil Engineering">Civil Engineering</option>
+              <option value="Civil Engineering">Civil Engineering</option> */}
+              {departments.map((dept) => (
+                <option key={dept._id} value={dept._id}>
+                  {dept}
+                </option>
+              ))}
             </select>
           </div>
           <div className="form-group mt-3">

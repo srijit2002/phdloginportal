@@ -13,18 +13,21 @@ import AdminHome from "./components/AdminHome";
 import AdminProfile from "./components/AdminProfile";
 import AdminState from "./context/Admins/AdminState";
 import Record from "./components/Record";
+import HeadHome from "./components/HeadHome";
+import HeadProfile from "./components/HeadProfile";
+import HeadState from "./context/Heads/HeadState";
+import Faculties from "./components/Faculties";
 // require("dotenv").config();
 
 const myStyle = {
-  backgroundImage:
-    "url(https://w0.peakpx.com/wallpaper/146/911/HD-wallpaper-blue-abstract-waves-creative-blue-wavy-background-blue-backgrounds-abstract-waves-waves-textures.jpg)",
-  height: "100%",
-  // margin: "0",
-  paddingBottom: "500px",
+  background: "url(https://wallpapercave.com/wp/wp3323223.jpg)",
+  height: "100vh",
+  paddingBottom: "1000px",
   backgroundAttachment: "fixed",
   backgroundSize: "cover",
   backgroundRepeat: "no-repeat",
-  // fontFamily: "Cantata One",
+  // color: "#fff",
+  textShadow: "0 0 10px rgba(0,0,0,.5)"
 };
 
 function App() {
@@ -44,40 +47,54 @@ function App() {
   return (
     <>
       <div style={myStyle}>
-        <AdminState>
-          <UserState>
-            <BrowserRouter>
-              <Navbar />
-              <Alert alert={alert} />
-              <Routes>
-                <Route
-                  path="/"
-                  element={<Home showAlert={showAlert} />}
-                ></Route>
-                <Route
-                  path="/admin"
-                  element={<AdminHome showAlert={showAlert} />}
-                ></Route>
-                <Route
-                  path="/admin/record"
-                  element={<Record showAlert={showAlert} />}
-                ></Route>
-                <Route
-                  path="/verifyemail"
-                  element={<Email_verification showAlert={showAlert} />}
-                ></Route>
-                <Route
-                  path="/profile"
-                  element={<Profile showAlert={showAlert} />}
-                ></Route>
-                <Route
-                  path="/admin_profile"
-                  element={<AdminProfile showAlert={showAlert} />}
-                ></Route>
-              </Routes>
-            </BrowserRouter>
-          </UserState>
-        </AdminState>
+        <HeadState>
+          <AdminState>
+            <UserState>
+              <BrowserRouter>
+                <Navbar />
+                <Alert alert={alert} />
+                <Routes>
+                  <Route
+                    path="/"
+                    element={<Home showAlert={showAlert} />}
+                  ></Route>
+                  <Route
+                    path="/admin"
+                    element={<AdminHome showAlert={showAlert} />}
+                  ></Route>
+                  <Route
+                    path="/admin/record"
+                    element={<Record showAlert={showAlert} />}
+                  ></Route>
+                  <Route
+                    path="/verifyemail"
+                    element={<Email_verification showAlert={showAlert} />}
+                  ></Route>
+                  <Route
+                    path="/profile"
+                    element={<Profile showAlert={showAlert} />}
+                  ></Route>
+                  <Route
+                    path="/admin_profile"
+                    element={<AdminProfile showAlert={showAlert} />}
+                  ></Route>
+                  <Route
+                    path="/head_profile"
+                    element={<HeadProfile showAlert={showAlert} />}
+                  ></Route>
+                  <Route
+                    path="/head"
+                    element={<HeadHome showAlert={showAlert} />}
+                  ></Route>
+                  <Route
+                    path="/fac"
+                    element={<Faculties showAlert={showAlert} />}
+                  ></Route>
+                </Routes>
+              </BrowserRouter>
+            </UserState>
+          </AdminState>
+        </HeadState>
       </div>
     </>
   );

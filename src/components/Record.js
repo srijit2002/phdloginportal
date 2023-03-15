@@ -69,6 +69,13 @@ const Record = (props) => {
         <u>
           <h1>{adminDetails.state2.department} Student Record</h1>
         </u>
+      </div>
+      <div className="container" style={{ textAlign: "center" }}>
+        <span style={{ fontSize: "1rem", fontWeight: "bold" }}>
+          Search by keyword
+        </span>
+      </div>
+      <div className="container" style={{ textAlign: "center" }}>
         <input
           className="mb-3"
           type="text"
