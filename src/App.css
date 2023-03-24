@@ -89,3 +89,20 @@ label {
   border-color: #0066cc;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
+
+.small-btn {
+  font-size: 12px;
+  padding: 3px 8px;
+  border-radius: 5px;
+}
+
+.small-btn .arrow-down::after {
+  content: "▼";
+  display: inline-block;
+  margin-left: 5px;
+  transform: translateY(-1px);
+}
+
+.small-btn:hover .arrow-down::after {
+  transform: translateY(1px);
+}

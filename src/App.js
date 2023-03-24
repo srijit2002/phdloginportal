@@ -17,6 +17,8 @@ import HeadHome from "./components/HeadHome";
 import HeadProfile from "./components/HeadProfile";
 import HeadState from "./context/Heads/HeadState";
 import Faculties from "./components/Faculties";
+import FacDetails from "./components/FacDetails";
+import Students from "./components/Students";
 // require("dotenv").config();
 
 const myStyle = {
@@ -27,7 +29,7 @@ const myStyle = {
   backgroundSize: "cover",
   backgroundRepeat: "no-repeat",
   // color: "#fff",
-  textShadow: "0 0 10px rgba(0,0,0,.5)"
+  // textShadow: "0 0 10px rgba(0,0,0,.5)",
 };
 
 function App() {
@@ -89,6 +91,14 @@ function App() {
                   <Route
                     path="/fac"
                     element={<Faculties showAlert={showAlert} />}
+                  ></Route>
+                  <Route
+                    path="/stud"
+                    element={<Students showAlert={showAlert} />}
+                  ></Route>
+                  <Route
+                    path="/facDetails/:id"
+                    element={<FacDetails showAlert={showAlert} />}
                   ></Route>
                 </Routes>
               </BrowserRouter>

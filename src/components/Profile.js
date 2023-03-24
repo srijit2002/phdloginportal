@@ -95,6 +95,23 @@ const Profile = (props) => {
     return xyz.slice(0, 10);
   }
 
+  const host = "http://localhost:5000";
+  const [faculties, setFaculties] = useState([]);
+
+  async function fetchFac() {
+    const response = await fetch(
+      `${host}/getFac/${localStorage.getItem("department")}`,
+      {
+        method: "GET",
+      }
+    );
+    const json = await response.json();
+    json.sort((a, b) => a.full_name.localeCompare(b.full_name));
+    const facNames = json.map((fac) => fac.full_name);
+    setFaculties(facNames);
+    console.log(facNames);
+  }
+
   const [tempDate, setTempDate] = useState(
     `{${userDetails.state2.Commencement_Date === "Not Set"}}`
       ? Date.now()
@@ -105,10 +122,14 @@ const Profile = (props) => {
     setHovered(true);
     setOpacity(0.7);
   };
-  
+
   useEffect(() => {
     userDetails.getUserDetails();
+    localStorage.setItem("department", userDetails.state2.department);
+    fetchFac();
   }, []);
+  // useEffect(() => {
+  // }, []);
 
   const handleMouseLeave = () => {
     setHovered(false);
@@ -317,11 +338,16 @@ const Profile = (props) => {
                     <option selected disabled value="Not Selected">
                       Not Selected
                     </option>
-                    <option value="Prof1">Prof1</option>
+                    {/* <option value="Prof1">Prof1</option>
                     <option value="Prof2">Prof2</option>
                     <option value="Prof3">Prof3</option>
                     <option value="Prof4">Prof4</option>
-                    <option value="Prof5">Prof5</option>
+                    <option value="Prof5">Prof5</option> */}
+                    {faculties.map((fac) => (
+                      <option key={fac._id} value={fac._id}>
+                        {fac}
+                      </option>
+                    ))}
                   </select>
                 </div>
                 <div className="mb-3">
@@ -338,11 +364,16 @@ const Profile = (props) => {
                     <option selected disabled value="Not Selected">
                       Not Selected
                     </option>
-                    <option value="Prof1">Prof1</option>
+                    {/* <option value="Prof1">Prof1</option>
                     <option value="Prof2">Prof2</option>
                     <option value="Prof3">Prof3</option>
                     <option value="Prof4">Prof4</option>
-                    <option value="Prof5">Prof5</option>
+                    <option value="Prof5">Prof5</option> */}
+                    {faculties.map((fac) => (
+                      <option key={fac._id} value={fac._id}>
+                        {fac}
+                      </option>
+                    ))}
                   </select>
                 </div>
                 <div className="mb-3">

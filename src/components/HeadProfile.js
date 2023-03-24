@@ -42,7 +42,7 @@ const HeadProfile = () => {
 
   const handleClick = (department) => {
     localStorage.setItem("hdep", department);
-  }
+  };
 
   const DepartmentDropdown = ({ department, index }) => (
     <div className="dropdown">
@@ -69,7 +69,11 @@ const HeadProfile = () => {
           </Link>
         </li>
         <li>
-          <Link className="dropdown-item" to="/">
+          <Link
+            className="dropdown-item"
+            to={{ pathname: `/stud`, state: { department: department } }}
+            onClick={() => handleClick(department)}
+          >
             Students
           </Link>
         </li>

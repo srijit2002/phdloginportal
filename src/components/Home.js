@@ -22,17 +22,17 @@ const Home = (props) => {
   const [departments, setDepartments] = useState([]);
   const host = "http://localhost:5000";
 
+  async function fetchDept() {
+    const response = await fetch(`${host}/departments`, {
+      method: "GET",
+    });
+    const json = await response.json();
+    json.sort((a, b) => a.department.localeCompare(b.department));
+    const departmentNames = json.map((department) => department.department);
+    setDepartments(departmentNames);
+    console.log(departmentNames);
+  }
   useEffect(() => {
-    async function fetchDept() {
-      const response = await fetch(`${host}/departments`, {
-        method: "GET",
-      });
-      const json = await response.json();
-      json.sort((a, b) => a.department.localeCompare(b.department));
-      const departmentNames = json.map((department) => department.department);
-      setDepartments(departmentNames);
-      console.log(departmentNames);
-    }
     fetchDept();
   }, []);
 

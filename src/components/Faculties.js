@@ -1,26 +1,75 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { Table } from "react-bootstrap";
+import headContext from "../context/Heads/headContext";
 
-const Faculties = () => {
+const Faculties = (props) => {
   const department = localStorage.getItem("hdep");
+  const { removeAdmin, createAdmin } = useContext(headContext);
   const Navigate = useNavigate();
+
+  const [newAdminCreds, setNewAdminCreds] = useState({
+    full_name: "",
+    web_mail: "",
+    password: "",
+    cpassword: "",
+  });
+
+  const handleCredsChange = (e) => {
+    e.preventDefault();
+    setNewAdminCreds({ ...newAdminCreds, [e.target.name]: e.target.value });
+  };
+
+  const handleAddFaculty = async (e) => {
+    e.preventDefault();
+    console.log("Add");
+    console.log(
+      newAdminCreds.full_name,
+      department,
+      newAdminCreds.web_mail,
+      newAdminCreds.password
+    );
+
+    try {
+      const response = await createAdmin(
+        newAdminCreds.full_name,
+        department,
+        newAdminCreds.web_mail,
+        newAdminCreds.password
+      );
+      console.log(response);
+      props.showAlert("Admin Created Successfully", "success");
+      await fetchFac();
+    } catch (error) {
+      console.error(error);
+      props.showAlert("Error creating admin", "danger");
+    }
+  };
+
+  const handleRemove = async (id) => {
+    console.log("Remove clicked");
+    console.log(id);
+    removeAdmin(id);
+    setFaculties(faculties.filter((faculty) => faculty._id !== id));
+    props.showAlert("Removed Admin successfully", "success");
+  };
+
   const handleBack = () => {
     localStorage.removeItem("hdep");
     Navigate("/head_profile");
   };
   const host = "http://localhost:5000";
   const [faculties, setFaculties] = useState([]);
+  async function fetchFac() {
+    const response = await fetch(`${host}/getFac/${department}`, {
+      method: "GET",
+    });
+    const json = await response.json();
+    json.sort((a, b) => a.full_name.localeCompare(b.full_name));
+    setFaculties(json);
+  }
   useEffect(() => {
-    async function fetchFac() {
-      const response = await fetch(`${host}/getFac/${department}`, {
-        method: "GET",
-      });
-      const json = await response.json();
-      json.sort((a, b) => a.full_name.localeCompare(b.full_name));
-      setFaculties(json);
-    }
     fetchFac();
   }, []);
 
@@ -37,9 +86,13 @@ const Faculties = () => {
   function timeSince(date) {
     const seconds = Math.floor((Date.now() - date.getTime()) / 1000);
     const interval = intervals.find((i) => i.seconds < seconds);
+    if (!interval) {
+      return "just now";
+    }
     const count = Math.floor(seconds / interval.seconds);
     return `${count} ${interval.label}${count !== 1 ? "s" : ""} ago`;
   }
+
   // for showing time registered
 
   const timeDiff = (text) => {
@@ -48,11 +101,6 @@ const Faculties = () => {
     return timeSince(d2);
   };
   // getting time difference
-
-  const handleAddFaculty = (event) => {
-    event.preventDefault();
-    // console.log("Add");
-  };
 
   return (
     <>
@@ -84,16 +132,32 @@ const Faculties = () => {
             </thead>
             <tbody>
               {faculties.map((faculty) => (
-                <tr key={faculty.id}>
+                <tr key={faculty._id}>
                   <td>{faculty.full_name}</td>
                   {/* <td>{faculty.department}</td> */}
                   <td>{faculty.web_mail}</td>
                   <td>{timeDiff(faculty.date)}</td>
                   <td>
-                    <button className="btn btn-primary">View Details</button>
+                    <button
+                      className="btn btn-primary"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        Navigate(`/facDetails/${faculty._id}`);
+                      }}
+                    >
+                      View Details
+                    </button>
                   </td>
                   <td>
-                    <button className="btn btn-danger">Remove</button>
+                    <button
+                      className="btn btn-danger"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        handleRemove(faculty._id);
+                      }}
+                    >
+                      Remove
+                    </button>
                   </td>
                 </tr>
               ))}
@@ -113,7 +177,7 @@ const Faculties = () => {
           data-bs-toggle="modal"
           data-bs-target="#addmodal"
           className="btn btn-primary"
-          onClick={handleAddFaculty}
+          // onClick={handleAddFaculty}
         >
           Add Faculty
         </button>
@@ -150,6 +214,8 @@ const Faculties = () => {
                     type="text"
                     className="form-control"
                     id="full_name"
+                    name="full_name"
+                    onChange={handleCredsChange}
                     minLength={3}
                   />
                 </div>
@@ -157,7 +223,13 @@ const Faculties = () => {
                   <label htmlFor="exampleInputEmail1" className="form-label">
                     Web Mail
                   </label>
-                  <input type="email" className="form-control" id="web_mail" />
+                  <input
+                    type="email"
+                    className="form-control"
+                    name="web_mail"
+                    onChange={handleCredsChange}
+                    id="web_mail"
+                  />
                 </div>
                 <div className="mb-3">
                   <label htmlFor="exampleInputPassword1" className="form-label">
@@ -167,6 +239,8 @@ const Faculties = () => {
                     type="password"
                     className="form-control"
                     id="password"
+                    name="password"
+                    onChange={handleCredsChange}
                   />
                 </div>
                 <div className="mb-3">
@@ -177,17 +251,9 @@ const Faculties = () => {
                     type="password"
                     className="form-control"
                     id="cpassword"
+                    name="cpassword"
+                    onChange={handleCredsChange}
                   />
-                </div>
-                <div className="mb-3 form-check">
-                  <input
-                    type="checkbox"
-                    className="form-check-input"
-                    id="exampleCheck1"
-                  />
-                  <label className="form-check-label" htmlFor="exampleCheck1">
-                    Check me out
-                  </label>
                 </div>
               </form>
             </div>
@@ -199,7 +265,13 @@ const Faculties = () => {
               >
                 Close
               </button>
-              <button type="button" className="btn btn-primary">
+              <button
+                type="button"
+                onClick={handleAddFaculty}
+                className="btn btn-primary"
+                data-bs-toggle="modal"
+                data-bs-target="#addmodal"
+              >
                 Add
               </button>
             </div>
