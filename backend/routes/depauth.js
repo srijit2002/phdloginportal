@@ -2,9 +2,11 @@ const express = require("express");
 const router = express.Router();
 const Departmaent = require("../models/Department");
 const { body, validationResult } = require("express-validator");
+const fetchhead = require("../middleware/fetchhead");
 
 router.post(
   "/createDepartment",
+  fetchhead,
   [body("department", "Enter valid department name").isLength({ min: 3 })],
   async (req, res) => {
     const errors = validationResult(req);
@@ -44,6 +46,5 @@ router.post(
     // res.send("hello");
   }
 );
-
 
 module.exports = router;

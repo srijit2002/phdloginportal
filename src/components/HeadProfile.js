@@ -6,7 +6,7 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 
-const HeadProfile = () => {
+const HeadProfile = (props) => {
   const headDetails = useContext(headContext);
 
   const Navigate = useNavigate();
@@ -25,18 +25,18 @@ const HeadProfile = () => {
 
   const host = "http://localhost:5000";
 
+  async function fetchDept() {
+    const response = await fetch(`${host}/departments`, {
+      method: "GET",
+    });
+    const json = await response.json();
+    json.sort((a, b) => a.department.localeCompare(b.department));
+    const departmentNames = json.map((department) => department.department);
+    setDepartments(departmentNames);
+    console.log(departmentNames);
+  }
   useEffect(() => {
     headDetails.getHeadDetails();
-    async function fetchDept() {
-      const response = await fetch(`${host}/departments`, {
-        method: "GET",
-      });
-      const json = await response.json();
-      json.sort((a, b) => a.department.localeCompare(b.department));
-      const departmentNames = json.map((department) => department.department);
-      setDepartments(departmentNames);
-      console.log(departmentNames);
-    }
     fetchDept();
   }, []);
 
@@ -112,6 +112,43 @@ const HeadProfile = () => {
     </div>
   );
 
+  const [newBranchName, setNewBranchName] = useState({
+    department: "",
+  });
+
+  const handleNewBranchChange = (e) => {
+    e.preventDefault();
+    setNewBranchName({ ...newBranchName, [e.target.name]: e.target.value });
+  };
+
+  const handleAddBranch = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await fetch(`${host}/api/depauth/createDepartment`, {
+        method: "POST",
+        headers: {
+          "auth-token": localStorage.getItem("token"),
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          department: newBranchName.department,
+        }),
+      });
+      const json = await response.json();
+      console.log(json);
+      if (json.success === true) {
+        props.showAlert("Branch added successfully", "success");
+        fetchDept();
+      } else {
+        props.showAlert("Some error occured", "danger");
+        fetchDept();
+      }
+    } catch (error) {
+      console.log(error);
+      props.showAlert("Some error occured", "danger");
+    }
+  };
+
   return (
     <>
       <div className="container">
@@ -179,6 +216,73 @@ const HeadProfile = () => {
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
+          <button
+            className="small-btn"
+            data-bs-toggle="modal"
+            data-bs-target="#addbranch"
+          >
+            Create New Branch
+          </button>
+        </div>
+      </div>
+      <div
+        className="modal fade"
+        id="addbranch"
+        data-bs-backdrop="static"
+        data-bs-keyboard="false"
+        tabIndex="-1"
+        aria-labelledby="staticBackdropLabel"
+        aria-hidden="true"
+      >
+        <div className="modal-dialog">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5 className="modal-title" id="staticBackdropLabel">
+                Add a New Branch
+              </h5>
+              <button
+                type="button"
+                className="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div className="modal-body">
+              <form>
+                <div className="mb-3">
+                  <label htmlFor="exampleInputEmail1" className="form-label">
+                    Branch Name
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="department"
+                    name="department"
+                    onChange={handleNewBranchChange}
+                    minLength={3}
+                  />
+                </div>
+              </form>
+            </div>
+            <div className="modal-footer">
+              <button
+                type="button"
+                className="btn btn-secondary"
+                data-bs-dismiss="modal"
+              >
+                Close
+              </button>
+              <button
+                type="button"
+                onClick={handleAddBranch}
+                className="btn btn-primary"
+                data-bs-toggle="modal"
+                data-bs-target="#addbranch"
+              >
+                Add
+              </button>
             </div>
           </div>
         </div>
