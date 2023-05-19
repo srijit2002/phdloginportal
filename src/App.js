@@ -19,6 +19,7 @@ import HeadState from "./context/Heads/HeadState";
 import Faculties from "./components/Faculties";
 import FacDetails from "./components/FacDetails";
 import Students from "./components/Students";
+import ForgotPassHome from "./components/ForgotPass/ForgotPassHome";
 // require("dotenv").config();
 
 const myStyle = {
@@ -99,6 +100,10 @@ function App() {
                   <Route
                     path="/facDetails/:id"
                     element={<FacDetails showAlert={showAlert} />}
+                  ></Route>
+                  <Route
+                    path="/forgotpass"
+                    element={<ForgotPassHome showAlert={showAlert} />}
                   ></Route>
                 </Routes>
               </BrowserRouter>

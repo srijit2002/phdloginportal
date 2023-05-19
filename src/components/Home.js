@@ -179,7 +179,7 @@ const Home = (props) => {
               </button>
             </div>
             <p className="text-center mt-2">
-              <Link to="/">Forgot password?</Link>
+              <Link to="/forgotpass">Forgot password?</Link>
             </p>
           </div>
         </form>

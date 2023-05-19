@@ -1,0 +1,16 @@
+.forgot-password-form {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    /* background-color: #ffffff; */
+  }
+  
+  .form-container {
+    text-align: center;
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0px 0px 10px #888888;
+  }
+  

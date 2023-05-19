@@ -100,7 +100,7 @@ const Profile = (props) => {
 
   async function fetchFac() {
     const response = await fetch(
-      `${host}/getFac/${localStorage.getItem("department")}`,
+      `${host}/getFac/${userDetails.state2.department || localStorage.getItem("department")}`,
       {
         method: "GET",
       }
@@ -127,6 +127,7 @@ const Profile = (props) => {
     userDetails.getUserDetails();
     localStorage.setItem("department", userDetails.state2.department);
     fetchFac();
+    console.log(2);
   }, []);
   // useEffect(() => {
   // }, []);
@@ -146,6 +147,10 @@ const Profile = (props) => {
       Commencement_Date: formattedDate,
     }));
   };
+
+  if (!faculties) {
+    return <div>...Loading</div>;
+  }
 
   return (
     <>
