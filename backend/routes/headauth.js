@@ -102,10 +102,13 @@ router.post(
   }
 );
 
-router.post("/gethead", fetchhead, async (req, res) => {
+router.get("/gethead", fetchhead, async (req, res) => {
   try {
-    let headId = req.head.id;
+    const headId = req.head.id;
     const head = await Head.findById(headId).select("-password");
+    if (!head) {
+      return res.status(404).send("No head found");
+    }
     res.send(head);
   } catch (error) {
     console.error(error.message);
@@ -243,5 +246,41 @@ router.get("/getStuds/:department", fetchhead, async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 });
+
+router.put("/changeEditAccess", fetchhead, async (req, res) => {
+  try {
+    const headId = req.head.id; // Get the logged-in head ID from the fetchhead middleware
+    const tempHead = await Head.findById(headId); // Find the corresponding Head document by ID
+
+    if (!tempHead) {
+      return res.status(404).json({ error: "Head not found" });
+    }
+
+    tempHead.editAccess = !tempHead.editAccess; // Toggle the editAccess parameter
+    await tempHead.save(); // Save the updated head object
+
+    res.json({ success: true, editAccess: tempHead.editAccess });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+router.get("/editable", fetchhead, async (req, res) => {
+  try {
+    const tempHead = await Head.findOne({ editAccess: true });
+
+    let success = false;
+    if (tempHead) {
+      success = true;
+    }
+
+    res.json({ success: success });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
 
 module.exports = router;

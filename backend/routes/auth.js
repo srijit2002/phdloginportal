@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const User = require("../models/User");
+const Head = require("../models/Head");
 const { body, validationResult } = require("express-validator");
 var fetchuser = require("../middleware/fetchuser");
 const bcrypt = require("bcryptjs");
@@ -263,6 +264,62 @@ router.post("/uploadFile", upload.single("myFile"), async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).send("Server error");
+  }
+});
+
+router.post("/changePass", async (req, res) => {
+  const { email } = req.body;
+  let success = false;
+  try {
+    let user = await User.findOne({ web_mail: email });
+    if (!user) {
+      return res
+        .status(400)
+        .json({ success, error: "No account registered with this Email." });
+    }
+    res.json({ success: true, userId: user.id });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+router.put("/resetPass", async (req, res) => {
+  const { email, passHash } = req.body;
+  const newUser = {};
+  if (passHash) {
+    newUser.password = passHash;
+  }
+  let success = false;
+  try {
+    let user = await User.findOne({ web_mail: email });
+    if (!user) {
+      return res
+        .status(400)
+        .json({ success, error: "No account registered with this Email." });
+    }
+    let id1 = user.id;
+    user = await User.findByIdAndUpdate(id1, { $set: newUser }, { new: true }); // Added 'await' to ensure the updated user is returned
+    res.json({ success: true, user });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+router.get("/editable", fetchuser, async (req, res) => {
+  try {
+    const tempHead = await Head.findOne({ editAccess: true });
+
+    let success = false;
+    if (tempHead) {
+      success = true;
+    }
+
+    res.json({ success: success });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send("Internal Server Error");
   }
 });
 

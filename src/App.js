@@ -19,7 +19,9 @@ import HeadState from "./context/Heads/HeadState";
 import Faculties from "./components/Faculties";
 import FacDetails from "./components/FacDetails";
 import Students from "./components/Students";
-import ForgotPassHome from "./components/ForgotPass/ForgotPassHome";
+import ForgotPassHome from "./components/ForgotPass/ForgotPassHome.js";
+import ForgotPassOTPsent from "./components/ForgotPass/ForgotPassOTPsent.js";
+import SetNewPass from "./components/ForgotPass/SetNewPass.js";
 // require("dotenv").config();
 
 const myStyle = {
@@ -104,6 +106,14 @@ function App() {
                   <Route
                     path="/forgotpass"
                     element={<ForgotPassHome showAlert={showAlert} />}
+                  ></Route>
+                  <Route
+                    path="/passRecovOTP"
+                    element={<ForgotPassOTPsent showAlert={showAlert} />}
+                  ></Route>
+                  <Route
+                    path="/setNewPassword"
+                    element={<SetNewPass showAlert={showAlert} />}
                   ></Route>
                 </Routes>
               </BrowserRouter>

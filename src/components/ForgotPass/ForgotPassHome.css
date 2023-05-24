@@ -1,16 +1,64 @@
+.forgot-password-container {
+  background-image: url("https://i.pinimg.com/originals/37/f0/67/37f067032fb93522e6da5dde141f27d8.jpg");
+  background-size: cover;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
 .forgot-password-form {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    /* background-color: #ffffff; */
-  }
-  
-  .form-container {
-    text-align: center;
-    background-color: #ffffff;
-    padding: 20px;
-    border-radius: 5px;
-    box-shadow: 0px 0px 10px #888888;
-  }
-  
+  background-color: rgba(255, 255, 255, 0.9);
+  max-width: 400px;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  text-align: center;
+}
+
+.icon-envelope {
+  color: #4285f4;
+  margin-bottom: 20px;
+}
+
+.form-title {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 10px;
+  text-align: left;
+  font-weight: bold;
+}
+.form-button {
+  background-color: #4285f4;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.form-button:hover {
+  background-color: #357ae8;
+}
+
+.form-input-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.form-input-icon {
+  margin-right: 10px;
+}
+
+.form-input {
+  flex-grow: 1;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}

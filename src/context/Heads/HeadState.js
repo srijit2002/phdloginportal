@@ -25,9 +25,10 @@ const HeadState = (props) => {
   const getHeadDetails = async () => {
     try {
       const response = await fetch(`${host}/api/headauth/gethead`, {
-        method: "POST",
+        method: "GET", // Use GET instead of POST
         headers: {
           "auth-token": localStorage.getItem("token"),
+          "Content-Type": "application/json", // Add Content-Type header
         },
       });
       const json = await response.json();
@@ -38,6 +39,7 @@ const HeadState = (props) => {
       console.error(error);
     }
   };
+  
 
   const removeAdmin = async (id) => {
     try {

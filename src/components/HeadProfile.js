@@ -5,6 +5,7 @@ import { useState } from "react";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
+import "./HeadProfile.css";
 
 const HeadProfile = (props) => {
   const headDetails = useContext(headContext);
@@ -22,7 +23,7 @@ const HeadProfile = (props) => {
   };
 
   const [departments, setDepartments] = useState([]);
-
+  const [editable, setEditable] = useState(false);
   const host = "http://localhost:5000";
 
   async function fetchDept() {
@@ -35,8 +36,30 @@ const HeadProfile = (props) => {
     setDepartments(departmentNames);
     console.log(departmentNames);
   }
+
+  const getEditableStatus = async () => {
+    // event.preventDefault();
+    try {
+      const response = await fetch(`${host}/api/headauth/editable`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "auth-token": localStorage.getItem("token"), // Add the auth-token header
+        },
+      });
+      const json = await response.json();
+      if (json.success) {
+        setEditable(true);
+        console.log(json);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     headDetails.getHeadDetails();
+    getEditableStatus();
     fetchDept();
   }, []);
 
@@ -140,12 +163,34 @@ const HeadProfile = (props) => {
         props.showAlert("Branch added successfully", "success");
         fetchDept();
       } else {
-        props.showAlert("Some error occured", "danger");
+        props.showAlert("Some error occurred", "danger");
         fetchDept();
       }
     } catch (error) {
       console.log(error);
-      props.showAlert("Some error occured", "danger");
+      props.showAlert("Some error occurred", "danger");
+    }
+  };
+
+  const handleToggleEditAccess = async (event) => {
+    event.preventDefault();
+    try {
+      const response = await fetch(`${host}/api/headauth/changeEditAccess`, {
+        method: "PUT",
+        headers: {
+          "auth-token": localStorage.getItem("token"),
+          "Content-Type": "application/json",
+        },
+      });
+      const json = await response.json();
+      console.log(json);
+      // Handle the response as per your requirements
+      if (json.success) {
+        setEditable(json.editAccess);
+      }
+    } catch (error) {
+      console.log(error);
+      // Handle the error as per your requirements
     }
   };
 
@@ -188,6 +233,22 @@ const HeadProfile = (props) => {
           <h2 className="mx-2 d-flex justify-content-center mb-1">
             IITP PhD Portal Head
           </h2>
+          <div
+            className="form-check form-switch"
+            style={{ textAlign: "center" }}
+          >
+            <label className="form-check-label" htmlFor="editAccessSwitch">
+              {editable ? "Edit Access Granted" : "Give Edit Access"}
+            </label>
+            <input
+              className="form-check-input"
+              type="checkbox"
+              id="editAccessSwitch"
+              checked={editable}
+              onChange={handleToggleEditAccess}
+              style={{ marginLeft: "48%" }}
+            />
+          </div>
           <div
             className="d-flex justify-content-center align-items-center mx-auto"
             style={{ textAlign: "center", justifyContent: "center" }}

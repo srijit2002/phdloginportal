@@ -10,9 +10,10 @@ import "react-datepicker/dist/react-datepicker.css";
 
 const Profile = (props) => {
   const userDetails = useContext(userContext);
-
+  const [editable, setEditable] = useState(false);
   const [hovered, setHovered] = useState(false);
   const [opacity, setOpacity] = useState(1);
+  const host = "http://localhost:5000";
   // const [profilepicUrl, setProfilepicUrl] = useState({ testImage: "" });
 
   const [editDetails, setEditDetails] = useState({
@@ -27,6 +28,26 @@ const Profile = (props) => {
   const handleEDetailschange = (event) => {
     setEditDetails({ ...editDetails, [event.target.name]: event.target.value });
     console.log(editDetails);
+  };
+
+  const getEditableStatus = async () => {
+    // event.preventDefault();
+    try {
+      const response = await fetch(`${host}/api/auth/editable`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "auth-token": localStorage.getItem("token"), // Add the auth-token header
+        },
+      });
+      const json = await response.json();
+      if (json.success) {
+        setEditable(true);
+        console.log(json);
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const [showModal, setShowModal] = useState(false);
@@ -95,12 +116,13 @@ const Profile = (props) => {
     return xyz.slice(0, 10);
   }
 
-  const host = "http://localhost:5000";
   const [faculties, setFaculties] = useState([]);
 
   async function fetchFac() {
     const response = await fetch(
-      `${host}/getFac/${userDetails.state2.department || localStorage.getItem("department")}`,
+      `${host}/getFac/${
+        userDetails.state2.department || localStorage.getItem("department")
+      }`,
       {
         method: "GET",
       }
@@ -124,6 +146,7 @@ const Profile = (props) => {
   };
 
   useEffect(() => {
+    getEditableStatus();
     userDetails.getUserDetails();
     localStorage.setItem("department", userDetails.state2.department);
     fetchFac();
@@ -294,13 +317,15 @@ const Profile = (props) => {
               </ul>
             </div>
           </div>
-          <button
-            data-bs-toggle="modal"
-            data-bs-target="#EditDetails"
-            className="btn btn-primary mx-2 mb-2"
-          >
-            Edit Details
-          </button>
+          {editable && (
+            <button
+              data-bs-toggle="modal"
+              data-bs-target="#EditDetails"
+              className="btn btn-primary mx-2 mb-2"
+            >
+              Edit Details
+            </button>
+          )}
         </div>
       </div>
       <div

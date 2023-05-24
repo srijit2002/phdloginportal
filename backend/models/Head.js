@@ -18,6 +18,10 @@ const HeadSchema = new Schema({
     type: Date,
     default: Date.now,
   },
+  editAccess: {
+    type: Boolean,
+    default: true,
+  },
 });
 // mongoose.model = {};
 const Head = mongoose.model("head", HeadSchema);
